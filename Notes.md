@@ -1189,3 +1189,165 @@
     ```
 
 ### Software Architecture Patterns and Styles
+#### Introduction
+    ```
+        - Software Architectural Patterns
+            - General repeatable solutions to commonly occuring system design problems
+            - common solutions to sw arch problems that involve multiple components that run as seperate runtime units
+            - incentives
+                - save valuable time and resources
+                - avoid making our architecture resemble big ball of mud(anti-pattern) : tightly coupled, global data etc..
+                - other engineers/software architects can follow it
+            - all software architectural patterns are just guidelines
+            - as system evolves, certain patterns may not fit us anymore
+            - we would need to migrate to different architectural pattern that now fits us better
+    ```
+
+#### Multi-Tier Architecture
+    ```
+        - organizes our sytem into multiple physical and logical tiers
+        - Logical seperation : limits the scope of responsibility on each tier
+        - Physical seperation : allows each tier to be seperately:
+            - developed
+            - upgraded
+            - scaled
+        - different from multilayer architecture which is internal seperation inside an application into multple layers
+        - restrictions :
+            - each pair of applications that belong to adjacent tiers communicate each other using client/server model
+            - discourages communication that skips through tiers
+                - keeps tiers loosely coupled
+        
+        - three tier/monolithic architecture:
+            - most common and popular pattern for client-server, web-based services
+            - First tier : Presentation Tier
+                - contains the user interface
+                - display info to the user
+                - take the user's input through GUI
+                - example : webpage, mobile app, desktop GUI app
+                - does not contain any business logic
+            - Middle/Second tier: Application/Logic/Business Tier
+                - provides all the functionality and the features(functional requirements)
+                - processing the data that comes from the presentation tier
+                - applying the relevant business logic to it
+            - Last tier : Data tier
+                - responsible for storage and persistence of user and business specific data
+                - may includes files and definitely contains databases
+            - Reasons for popularity:
+                - fits a large variety of use cases
+                    - example : online store, new website, video/audio streaming service
+                - easy to scale horizontally to:
+                    - handle large traffic
+                    - handle a lot of data
+            - drawback:
+                - monolithic structure of logic tier
+                    - no business logic in presentation or data tier
+                    - all business logic in single codebase that runs in
+                      single runtime unit
+                    - high CPU and memory consumption
+                        - makes application slower and less responsive
+                        - may require upgrading using vertical scaling
+                    - low development velocity
+                        - large complex codebase harder to:
+                            - develop, maintain, reason about
+                        - can be somewhat improved by:
+                            - logically splitting applications codebase into separate modules
+                    - organization scalability is limited
+            - perfect choice for:
+                - relatively small and not complex codebase
+                - maintained by small team of devs
+                - early-stage startups or well established companies
+                - if we don't need to split our codebase into multiple components
+
+        - two tier architecture:
+            - Presentation + business tier
+            - Data tier
+            - eliminates the overhead of middle logic layer
+            - provides faster more native experience to the users
+            - examples:
+                - desktop/mobile versions of editors for
+                    - document, image, music
+        
+        - four tier:
+            - presentation
+            - API gateway
+            - application
+            - data
+
+        - avoid more that four tiers to avoid tight coupling and skipping tiers
+    ```
+
+#### Microservices Arhitecture
+    ```
+        -  organizes our business logic as a collection of loosely coupled and independently deployed services. Each service is owned by a small team and has a narrow scope of responsibility
+        - advantages
+            - smaller codebase
+                - development becomes faster and easier
+                - building and testing is faster and easier
+                - troubleshooting/adding new features is easier
+                - new developers can become fully productive a lot faster
+            - better performance and scalability
+                - instances become less CPU instances and less memory intensive
+            - better organizational scalability
+            - better security through fault isolation
+        - considerations and best practices:
+            - we don't get all benefits out of the box
+            - if we don't follow we can fall into big ball of mud
+            - overhead and challenges
+                - organizational decoupling : we need to make sure that the services are logically separated such that every change:
+                    - can happen only in one service 
+                    - would not involve multiple teams
+            - Best practices:
+                - Single Responsiblity principle
+                    - each service needs to be responsible for only one:
+                        - business capability
+                        - domain
+                        - resource
+                        - action
+                - seperate db for each service
+        
+        - always start with simple monolithic approach first
+          when monolithic architecture stops working, we should consider microservices
+
+    ```
+
+#### Event Driven Architecture
+    ```
+        - synchronous communication in microservice architecture
+            - a service needs to know about other service
+            - needs to have api reference and calls the api synchronously
+            - there is dependency because of this between microservices
+        - Event Driven Architecture:
+            - there are no direct messages/requests that ask for data
+            - there are only events
+            - Event: an immutable statement of a fact or a change
+                - Fact event Example: user clicking on a digital ad
+                - Change events: player of a video game, iot device
+            - Components:
+                - Event Emitter
+                - message broker
+                - event consumer
+        - Benefits when used with microservice architecture
+            - decoupling of microservices using events and message brokers
+            - asynchronous message passing
+            - higher scalability
+            - more services can be added to the system without any changes
+            - allows :
+                - analyze streams of data
+                - detect patterns and act upon data in real-time
+        - Event Sourcing Pattern:
+            - instead of storing data in db, we can simply store the events and replay the events whenever necessary to analyze current state
+            - eliminate need for database
+            - append event to log whenever they come
+            - can store events for as long as we can
+            - add snapshot events to make querying faster
+        - CQRS (Command Query Responsibility Segregation)
+            - solves:
+                - optimizing a DB with high load of read and update operations
+                    - concurrent read and update make operations slow
+                    - we can optimize only read/write while compromising other
+                - joining multiple tables located in separate DBs that belong to different microservices
+            - allows to separate update and read operations into seperate dbs
+              sitting behind two different services
+            - a separate service programatically joins data from two services which are using different dbs, using the events published by the services, and stores the result in read-only DB
+
+    ```
