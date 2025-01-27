@@ -1351,3 +1351,105 @@
             - a separate service programatically joins data from two services which are using different dbs, using the events published by the services, and stores the result in read-only DB
 
     ```
+
+### Big Data Architecture Patterns
+
+#### Intro to Big Data
+    ```
+        - Big Data are datasets that are either:
+            - too large in size
+            - too complex in structure
+            - Come to our system at a high rate that exceeds the capacity of a traditional application
+        - Characteristics of Big Data:
+            - Volume:
+                - refers to the quantity of data that we need to process, store, analyze
+                - large quantities of data (~terabytes/petabytes per day)
+                - examples : internet search, medical software, real time security, weather prediction
+            - Variety
+                - large variety of Unstructured data from multiple sources
+                - data fusion : combining data together
+                    - helps in finding patterns and insights for our org
+                - example : social media data collection: likes, ad views, clicks etc.
+            - velocity
+                - continuous stream of data that comes to our system at a high rate due to:
+                    - large scale of the system
+                    - high frequency of events
+                - example: millions of users using an online store will cause very high frequency of events
+                           iot system with lots of sensors on many devices
+        - Purpose of processing big data:
+            - insights from analyzing big data:
+                - provide significant advantage over competition
+                - come in form of visualization, querying capabilities, predictive analysis
+                - helps in building algos or machine learning models or predict potential failures from log analysis
+    ```
+
+#### Big Data Processing Strategies
+    ```
+        - Batch Processing:
+            - store incoming data into distributed database or distributed file system
+            - data is never modified, only appended
+            - do not process each piece of data individually, but as batches of records
+            - perform processing on fix schedule(like once a day/hour/month)
+            - batch processing performs the analysis and produces up-to date view of the data we have
+                which can be stored in structured database which can be queried
+            - the view generated should reflect the knowledge we have about entire dataset
+            - depending on the use case batch processing can:
+                - pick up only the recently arrived data
+                - process entire data set from scratch
+            - Example :
+                - online learning subscription platform
+                    - ~1million events/minute due to video watching progress & reviewing etc
+                - search engine service
+                    - daily web crawler => index data
+            - advantages:
+                - easy to implement
+                - high availability
+                - better efficiency
+                - high fault tolerance towards human error
+                - complex and deep analysis of large datasets
+            - cons:
+                - long delay between incoming data and result from the processing job
+                - no real time view of data coming in
+        
+        - Real time processing:
+            - each event put onto the message queue which feeds the stream processing job
+            - advantages:
+                - analyze and respond to data as it comes into our system immediately
+            - cons:
+                - very hard to do any compex analysis in real time
+                - doing data-fusion/ analysing historical data is almost impossible
+            - Example:
+                - log analysis
+                - stock market app
+    ```
+
+#### Lambda Architecture
+    ```
+        - in many cases we need properties of both real time analysis and batch processing
+            - like ride sharing service may need both real time data(to match driver and clients) and
+              historic data(for finding busy times in a day etc)
+        - Lambda architecture provides properties of both
+        - attempts to find balance between:
+            - high fault tolerance and comprehensive analysis of data(Batch Processing)
+            - low latency(real-time processing)
+        - infra is divided into 3 layers: the incoming data is passed into batch and speed layer simultaneously
+            - Batch layer:
+                - manage dataset and be a system of records
+                - precompute batch views
+                - aims at perfect accuracy and operates on entire dataset
+            - speed layer
+                - real time processing happens here
+                - processing job analyze incoming data to real-time view
+                - compensates for the high latency in batch layer
+                - operates only on recent data
+            - serving layer
+                - respond to ad-hoc queries
+                - merge data from batch layer and speed layer to return required view
+        - Example:
+            - Ad tech companies:
+                - events:
+                    - user saw ad
+                    - user clicks ad
+                    - user makes a purchase from ad
+    ```
+    
