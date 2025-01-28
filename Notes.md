@@ -1452,4 +1452,19 @@
                     - user clicks ad
                     - user makes a purchase from ad
     ```
-    
+
+### System Design Examples
+#### System Design steps
+    ```
+        1. Ask questions to capture:
+            a. Functional requirements
+            b. Non-Functional requirements
+            c. System constraints
+        2. Define the system's API
+        3. Create a Software architecture digram to fulfill 
+           Functional requirements
+        4. Refine the Software Architecture Diagram to address 
+           the non-functional requirements
+        
+        Make the right trade-offs depending on the requirements
+    ```
